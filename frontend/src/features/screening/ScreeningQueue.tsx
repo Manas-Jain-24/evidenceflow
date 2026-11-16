@@ -187,7 +187,7 @@ export function ScreeningQueue() {
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
+      <div className="flex flex-col xl:flex-row items-stretch xl:items-center justify-between gap-3 text-xs">
         {/* Decision Filter Pills */}
         <div className="flex items-center gap-1 overflow-x-auto">
           {[
@@ -213,7 +213,7 @@ export function ScreeningQueue() {
 
         {/* Search input + Duplicate toggle */}
         <div className="flex items-center gap-3">
-          <div className="relative flex-1 sm:w-64">
+          <div className="relative flex-1 xl:w-64">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-1/2 -translate-y-1/2" />
             <input
               type="text"
