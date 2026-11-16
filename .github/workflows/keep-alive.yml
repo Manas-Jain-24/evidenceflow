@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Ping Backend Health Endpoint
         run: |
-          echo "Pinging EvidenceFlow Backend at https://evidenceflow-hd3d.onrender.com/api/health"
-          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://evidenceflow-hd3d.onrender.com/api/health")
+          echo "Pinging EvidenceFlow at https://evidenceflow-ggnr.onrender.com/api/health"
+          HTTP_STATUS=$(curl -s -o /dev/null -w "%{http_code}" "https://evidenceflow-ggnr.onrender.com/api/health")
           echo "Response status code: $HTTP_STATUS"
           if [ "$HTTP_STATUS" -eq 200 ]; then
             echo "Backend is awake and responding!"

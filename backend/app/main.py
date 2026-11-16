@@ -103,11 +103,7 @@ def create_app() -> FastAPI:
             },
         )
 
-    # Root and top-level health routes for uptime monitors
-    @app.api_route("/", methods=["GET", "HEAD"])
-    async def root():
-        return {"status": "ok", "service": "EvidenceFlow API"}
-
+    # Keep health checks outside the frontend's root route.
     @app.api_route("/health", methods=["GET", "HEAD"])
     async def root_health():
         return {"status": "ok", "service": "EvidenceFlow API"}
