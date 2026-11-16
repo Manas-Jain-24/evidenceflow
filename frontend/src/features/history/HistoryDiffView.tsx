@@ -1,10 +1,8 @@
 import {
-  AlertTriangle,
   ArrowRight,
   CheckCircle2,
   ChevronDown,
   ChevronUp,
-  GitCompare,
   RotateCcw,
   ShieldCheck
 } from 'lucide-react';
@@ -28,7 +26,6 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [pending, setPending] = useState(false);
   const [revertMessage, setRevertMessage] = useState('');
-  const [showLaterDecisionsBanner, setShowLaterDecisionsBanner] = useState(false);
 
   // Category list expansion states
   const [expandedSection, setExpandedSection] = useState<'added' | 'retained' | 'dropped' | null>('added');
@@ -51,7 +48,6 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
         } hidden. No source requests were made.`
       );
       setConfirmModalOpen(false);
-      setShowLaterDecisionsBanner(true);
     } finally {
       setPending(false);
     }
@@ -63,7 +59,7 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
       <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-2 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
         <div className="flex items-center gap-2">
           <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-            Level 2 • Gate 5 Demo Centrepiece
+            Query history
           </span>
           <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Query Evolution & Decision Preservation</span>
         </div>
@@ -186,12 +182,8 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
                     {expandedSection === 'added' && (
                       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800/80 space-y-2 text-slate-700 dark:text-slate-300">
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                          These studies appeared because the search query was broadened (e.g. adding sulfonylurea comparator or widening date range).
+                          {diff.records_added} records appear in the selected version but not the baseline version.
                         </p>
-                        <ul className="list-disc list-inside space-y-1 text-slate-800 dark:text-slate-300 font-mono text-[11px]">
-                          <li>Kahn S.E. et al. (2017) — Glycemic Durability of Metformin Monotherapy (Diabetes Care)</li>
-                          <li>UKPDS Study Group (2018) — Long-term Outcomes with Metformin vs Sulfonylurea (Lancet)</li>
-                        </ul>
                       </div>
                     )}
                   </div>
@@ -211,18 +203,8 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
                     {expandedSection === 'retained' && (
                       <div className="px-4 py-3 border-t border-slate-200 dark:border-slate-800/80 space-y-2 text-slate-700 dark:text-slate-300">
                         <p className="text-[11px] text-slate-500 dark:text-slate-400">
-                          Studies matched by both queries. Prior human screening tags (Include/Exclude/Maybe) are preserved without requiring re-screening.
+                          {diff.already_present} records appear in both versions. The backend reports {diff.decisions_preserved} preserved screening decisions.
                         </p>
-                        <div className="space-y-1 text-slate-800 dark:text-slate-300 font-mono text-[11px]">
-                          <div className="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
-                            <span>Smith J.A. et al. (2020) — Metformin vs Placebo in Adult T2D</span>
-                            <span className="px-1.5 py-0.5 rounded bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 text-[10px]">INCLUDED</span>
-                          </div>
-                          <div className="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800/60">
-                            <span>Chen Y. et al. (2019) — Murine Hepatic Gluconeogenesis Models</span>
-                            <span className="px-1.5 py-0.5 rounded bg-rose-100 dark:bg-rose-500/20 text-rose-800 dark:text-rose-300 text-[10px]">EXCLUDED (non-human)</span>
-                          </div>
-                        </div>
                       </div>
                     )}
                   </div>
@@ -273,36 +255,12 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
             </div>
           )}
 
-          {/* Revert Banner for later duplicate decisions */}
-          {showLaterDecisionsBanner && (
-            <div className="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-500/40 text-xs text-amber-900 dark:text-amber-200 flex items-center justify-between gap-3">
-              <div className="flex items-center gap-2">
-                <AlertTriangle className="w-4 h-4 text-amber-600 dark:text-amber-400 shrink-0" />
-                <span>2 duplicate cluster groups differ under your later reviewer decisions. Apply them to the restored view?</span>
-              </div>
-              <div className="flex items-center gap-2 shrink-0">
-                <button
-                  onClick={() => setShowLaterDecisionsBanner(false)}
-                  className="px-3 py-1 rounded-lg bg-amber-600 hover:bg-amber-500 text-white font-bold text-xs shadow-sm transition"
-                >
-                  Apply Decided Clusters
-                </button>
-                <button
-                  onClick={() => setShowLaterDecisionsBanner(false)}
-                  className="px-2 py-1 text-xs text-amber-700 dark:text-amber-400 hover:underline"
-                >
-                  Keep Baseline
-                </button>
-              </div>
-            </div>
-          )}
-
           {/* Exact Revert Confirmation Modal */}
           <Modal
             isOpen={confirmModalOpen}
             onClose={() => setConfirmModalOpen(false)}
             title={`Restore Query v${restore?.version_no}?`}
-            description="No API calls are made. Zero external API requests will be performed. Zero external source requests will be performed. This restores the exact visibility snapshot of this query version while mathematically preserving all reviewer decisions."
+            description="This restores the saved query snapshot without re-fetching PubMed or Europe PMC. Reviewer decisions remain stored."
           >
             <div className="space-y-3 text-xs text-slate-700 dark:text-slate-300 pt-2">
               <div className="p-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 text-[11px] font-mono space-y-1">
@@ -331,5 +289,4 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
       )}
     </div>
   );
-}
 }

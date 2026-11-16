@@ -26,14 +26,19 @@ describe('Stored query history', () => {
     expect(await screen.findByText('Query Evolution & Decision Preservation')).toBeInTheDocument();
     expect(screen.getByText('45')).toBeInTheDocument(); expect(screen.getByText('498')).toBeInTheDocument();
     expect(screen.queryByText('Inherited Decisions')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Kahn S\.E\./)).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: /Retained Records & Preserved Decisions/ }));
+    expect(screen.getByText(/backend reports 498 preserved screening decisions/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Smith J\.A\./)).not.toBeInTheDocument();
     fireEvent.change(screen.getByLabelText('To version'), { target: { value: 'query-2' } });
     await waitFor(() => expect(fetch).toHaveBeenCalledWith('/api/queries/query-2/diff?against=query-1', expect.anything()));
   });
   it('confirms a restore and displays returned zero counts', async () => {
     installApi(); render(<Harness><HistoryDiffView /></Harness>);
     fireEvent.click(await screen.findByRole('button', { name: 'Restore v1' }));
-    expect(screen.getByText(/Zero external API requests will be performed/)).toBeInTheDocument();
+    expect(screen.getByText(/without re-fetching PubMed or Europe PMC/)).toBeInTheDocument();
     fireEvent.click(screen.getByRole('button', { name: 'Execute restore' }));
     expect(await screen.findByText('Restored v1: 0 records visible, 5 hidden. No source requests were made.')).toBeInTheDocument();
+    expect(screen.queryByText(/2 duplicate cluster groups differ/)).not.toBeInTheDocument();
   });
 });

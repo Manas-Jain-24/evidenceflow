@@ -3,13 +3,11 @@ import {
   ArrowLeft,
   Check,
   ChevronDown,
-  Command,
   FilePlus,
   HelpCircle,
   Moon,
   RotateCcw,
   Search,
-  Sparkles,
   Sun,
   User
 } from 'lucide-react';
@@ -24,7 +22,6 @@ interface HeaderProps {
   onToggleTheme?: () => void;
   onOpenShortcuts?: () => void;
   isDark?: boolean;
-  activeQueryVersion?: string | number | null;
   reviews?: Review[];
   activeReviewId?: EntityId;
   onSelectReview?: (id: EntityId) => void;
@@ -38,7 +35,6 @@ export function Header({
   onToggleTheme,
   onOpenShortcuts,
   isDark = true,
-  activeQueryVersion,
   reviews = [],
   activeReviewId,
   onSelectReview,
@@ -65,8 +61,6 @@ export function Header({
     setIsDropdownOpen(false);
     onRefresh();
   };
-
-  const activeReview = reviews.find(r => r.id === activeReviewId);
 
   return (
     <header className="h-14 px-4 md:px-6 border-b border-slate-200/80 dark:border-slate-800/80 bg-white/70 dark:bg-slate-950/70 backdrop-blur-xl flex items-center justify-between sticky top-0 z-40 transition-colors duration-300">
@@ -158,11 +152,11 @@ export function Header({
               ? 'bg-emerald-50 dark:bg-emerald-950/40 border-emerald-200 dark:border-emerald-500/30 text-emerald-700 dark:text-emerald-400'
               : 'bg-amber-50 dark:bg-amber-950/40 border-amber-200 dark:border-amber-500/30 text-amber-700 dark:text-amber-300'
           }`}
-          title={healthMode === 'live' ? 'Connected to live FastAPI backend' : 'Backend offline; mock mode active'}
+          title={healthMode === 'live' ? 'Connected to live FastAPI backend' : healthMode === 'connecting' ? 'Connecting to backend' : 'Backend unavailable'}
         >
           <span className="w-1.5 h-1.5 rounded-full bg-current animate-pulse" />
           <span className="hidden sm:inline">
-            {healthMode === 'live' ? 'Backend Live' : healthMode === 'connecting' ? 'Connecting…' : 'Mock Mode'}
+            {healthMode === 'live' ? 'Backend Live' : healthMode === 'connecting' ? 'Connecting…' : 'Backend Offline'}
           </span>
         </div>
 

@@ -28,12 +28,11 @@ describe('Workspace connectivity', () => {
       throw new Error(`Unexpected request: ${url}`);
     });
     vi.stubGlobal('fetch', fetcher); renderApp();
-    fireEvent.click(screen.getByRole('button', { name: 'Enter Workspace' }));
-    expect(await screen.findByText(/Create a review to define your question/)).toBeInTheDocument();
-    fireEvent.click(screen.getByRole('button', { name: 'New review' }));
-    fireEvent.change(screen.getByLabelText('Review title'), { target: { value: 'My protocol' } });
-    fireEvent.change(screen.getByLabelText('Research question'), { target: { value: 'My question' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Create review' }));
+    expect(await screen.findByRole('heading', { name: 'No Review Workspace Found' })).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('button', { name: '+ Create Review' }));
+    fireEvent.change(screen.getByLabelText('Review Title:'), { target: { value: 'My protocol' } });
+    fireEvent.change(screen.getByLabelText('PICO Research Question:'), { target: { value: 'My question' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Create Systematic Review' }));
     expect(await screen.findByRole('heading', { name: 'My protocol' })).toBeInTheDocument();
     expect(screen.getByText('0%')).toBeInTheDocument();
     expect(localStorage.getItem('evidenceflow_review')).toBe('created-uuid');
@@ -45,19 +44,19 @@ describe('Workspace connectivity', () => {
     const first = review('first-uuid', 'First protocol'), second = review('second-uuid', 'Second protocol');
     vi.stubGlobal('fetch', vi.fn(async (url: string) => Response.json(url === '/api/reviews' ? [first, second]
       : url.includes('duplicate-pairs') ? [] : url.includes('second-uuid') ? second : url.includes('first-uuid') ? first : { status: 'ok' })));
-    renderApp(); fireEvent.click(screen.getByRole('button', { name: 'Enter Workspace' }));
+    renderApp();
     await screen.findByRole('heading', { name: 'First protocol' });
-    fireEvent.change(screen.getByLabelText('Review'), { target: { value: 'second-uuid' } });
+    fireEvent.change(screen.getByLabelText('Active Review'), { target: { value: 'second-uuid' } });
     expect(await screen.findByRole('heading', { name: 'Second protocol' })).toBeInTheDocument();
     expect(screen.queryByRole('heading', { name: 'First protocol' })).not.toBeInTheDocument();
   });
   it('shows connection failure and allows retry instead of displaying sample records', async () => {
     let offline = true;
     vi.stubGlobal('fetch', vi.fn(async () => { if (offline) throw new Error('offline'); return Response.json([]); }));
-    renderApp(); fireEvent.click(screen.getByRole('button', { name: 'Enter Workspace' }));
+    renderApp();
     expect(await screen.findByText('Cannot reach the backend. Start the backend server, then retry.')).toBeInTheDocument();
     offline = false; fireEvent.click(screen.getByRole('button', { name: 'Retry connection' }));
-    expect(await screen.findByText(/Create a review to define your question/)).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'No Review Workspace Found' })).toBeInTheDocument();
   });
   it('polls queued import runs until completion and stops polling', async () => {
     let calls = 0;

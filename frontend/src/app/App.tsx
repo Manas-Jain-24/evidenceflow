@@ -37,7 +37,9 @@ export function App() {
     setView(nextView);
     try {
       localStorage.setItem('evidenceflow_view', nextView);
-    } catch {}
+    } catch {
+      // Keep the current view when local storage is unavailable.
+    }
   };
   const [activeTab, setActiveTab] = useState<NavTab>('setup');
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
@@ -68,7 +70,9 @@ export function App() {
         document.documentElement.classList.remove('dark');
         localStorage.setItem('evidenceflow_theme', 'light');
       }
-    } catch {}
+    } catch {
+      // The theme still applies to this page when local storage is unavailable.
+    }
   }, [isDark]);
 
   // Global Command+K / Ctrl+K and shortcut listener
@@ -163,10 +167,11 @@ export function App() {
           }}
         >
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label htmlFor="review-title" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               Review Title:
             </label>
             <input
+              id="review-title"
               required
               maxLength={255}
               value={title}
@@ -177,10 +182,11 @@ export function App() {
           </div>
 
           <div>
-            <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
+            <label htmlFor="review-question" className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
               PICO Research Question:
             </label>
             <textarea
+              id="review-question"
               required
               maxLength={1000}
               value={question}
