@@ -1,6 +1,7 @@
 import { AlertTriangle, Check, GitMerge, ShieldAlert, X } from 'lucide-react';
 import { useState } from 'react';
 import { DedupTierBadge } from '../../components/ui/Badge';
+import { NcbiDisclaimer } from '../../components/ui/NcbiDisclaimer';
 import { api, getActiveReviewer } from '../../lib/api';
 import { useAction, useData, useWorkspace } from '../../lib/workspace';
 import type { EntityId } from '../../types/api';
@@ -45,18 +46,10 @@ export function DuplicatesQueue() {
   return (
     <div className="space-y-5 max-w-6xl mx-auto py-2">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-slate-200 pb-5 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-              Step 4 • Gate 4
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Preserve Every Record • Hide, Never Delete</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">Duplicate Pair Resolution Queue</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Automated pair scoring groups identical papers. Confirm uncertain pairs or separate distinct reports.
-          </p>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Duplicates</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Review possible matches before treating papers as one study.</p>
         </div>
 
         {/* Filter Pills */}
@@ -93,6 +86,8 @@ export function DuplicatesQueue() {
           </button>
         </div>
       </div>
+
+      {(activePair?.record_a?.source === 'pubmed' || activePair?.record_b?.source === 'pubmed') && <NcbiDisclaimer />}
 
       {!activePair ? (
         <div className="p-12 text-center rounded-2xl bg-white/70 dark:bg-slate-900/40 border border-slate-200/80 dark:border-slate-800 text-slate-500 dark:text-slate-400 text-sm">

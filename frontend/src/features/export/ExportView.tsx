@@ -1,4 +1,5 @@
 import { Download, FileSpreadsheet, ShieldAlert } from 'lucide-react';
+import { NcbiDisclaimer } from '../../components/ui/NcbiDisclaimer';
 import { api } from '../../lib/api';
 import { useAction, useData, useWorkspace } from '../../lib/workspace';
 
@@ -33,18 +34,10 @@ export function ExportView() {
   return (
     <div className="space-y-5 max-w-6xl mx-auto py-2">
       {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 border-b border-slate-200 pb-5 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/30">
-              Step 7 • Synthesis
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Included Studies with PICO Evidence</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">Systematic Review CSV Export</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Export verified included representative studies, extracted PICO tags, and complete decision provenance.
-          </p>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Export review</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Download included studies, PICO tags, and decision history.</p>
         </div>
 
         {/* Download CSV button */}
@@ -56,6 +49,8 @@ export function ExportView() {
           <span>Download PRISMA CSV</span>
         </button>
       </div>
+
+      {records.some(record => record.source === 'pubmed') && <NcbiDisclaimer />}
 
       {/* Warning banner if open conflicts exist */}
       {openConflictsCount > 0 && (
@@ -79,12 +74,11 @@ export function ExportView() {
             <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
             <span>Export Table Preview ({records.length} Included Representative Studies)</span>
           </div>
-          <span className="text-slate-500 dark:text-slate-400 font-mono text-[11px]">Format: Comma-Separated Values (RFC 4180)</span>
         </div>
 
         {records.length === 0 ? (
           <div className="text-center py-12 text-slate-400 text-xs">
-            No included studies ready for synthesis. Review and mark studies as Include in Step 5.
+            No included studies yet. Include papers from the screening queue to export them.
           </div>
         ) : (
           <div className="overflow-x-auto">
@@ -122,7 +116,7 @@ export function ExportView() {
                     </td>
                     <td className="py-3 px-3 text-xs">{r.pico_annotations?.map(p => `${p.label}: ${p.text}`).join('; ') || 'No spans detected'}</td>
                     <td className="py-3 px-4 text-slate-700 dark:text-slate-300 text-[11px] leading-relaxed italic">
-                      "{r.current_decision?.reason_text || 'Standard protocol inclusion'}"
+                      {r.current_decision?.reason_text || 'No note recorded'}
                       <div className="text-[10px] text-slate-400 dark:text-slate-500 font-mono not-italic mt-0.5">
                         by {r.current_decision?.reviewer || 'Reviewer'}
                       </div>

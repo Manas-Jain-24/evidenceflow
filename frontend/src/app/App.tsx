@@ -1,11 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { AmbientBackground } from '../components/ui/AmbientBackground';
 import { CommandPalette } from '../components/ui/CommandPalette';
 import { DataBoundary } from '../components/ui/DataBoundary';
 import { KeyboardShortcutsModal } from '../components/ui/KeyboardShortcutsModal';
 import { Modal } from '../components/ui/Modal';
-import { NcbiDisclaimer } from '../components/ui/NcbiDisclaimer';
 import { AuditTrail } from '../features/audit/AuditTrail';
 import { ConflictsWorkspace } from '../features/conflicts/ConflictsWorkspace';
 import { DuplicatesQueue } from '../features/duplicates/DuplicatesQueue';
@@ -47,9 +45,9 @@ export function App() {
   const [isDark, setIsDark] = useState(() => {
     try {
       const saved = localStorage.getItem('evidenceflow_theme');
-      return saved ? saved === 'dark' : true;
+      return saved === 'dark';
     } catch {
-      return true;
+      return false;
     }
   });
 
@@ -120,9 +118,7 @@ export function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-[#070b13] text-slate-900 dark:text-slate-100 flex flex-col font-sans selection:bg-teal-500 selection:text-white transition-colors duration-300 relative">
-      {/* Live Wallpaper & Subtle Parallax Ambient Background */}
-      <AmbientBackground isDark={isDark} />
+    <div className="min-h-screen bg-[#f8f9f7] dark:bg-slate-950 text-slate-900 dark:text-slate-100 flex flex-col font-sans">
 
       {/* Streamlined Master Header */}
       <Header
@@ -155,8 +151,8 @@ export function App() {
       <Modal
         isOpen={creating}
         onClose={() => setCreating(false)}
-        title="Initialize New Systematic Review"
-        description="Establish the research question and PICO protocol for auditable systematic screening."
+        title="New review"
+        description="Give this review a name and a research question."
       >
         <form
           aria-label="Create review"
@@ -208,7 +204,7 @@ export function App() {
               disabled={create.isPending || !title.trim() || !question.trim()}
               className="px-4 py-1.5 bg-teal-600 hover:bg-teal-500 rounded-lg text-xs font-semibold text-white disabled:opacity-50 shadow-sm transition"
             >
-              {create.isPending ? 'Creating…' : 'Create Systematic Review'}
+              {create.isPending ? 'Creating…' : 'Create review'}
             </button>
           </div>
         </form>
@@ -293,8 +289,7 @@ function Workspace({
       <Sidebar activeTab={activeTab} onSelectTab={setActiveTab} stats={review?.stats} />
 
       {/* Main Viewport Content with Airy Whitespace & Background Blur */}
-      <main className="flex-1 min-w-0 overflow-y-auto p-4 md:p-6 lg:p-8 bg-transparent">
-        <NcbiDisclaimer />
+      <main className="flex-1 min-w-0 overflow-y-auto p-4 md:p-8 lg:p-10">
         {activeTab === 'setup' && <ReviewSetup onProceedToSearch={() => setActiveTab('search')} />}
         {activeTab === 'search' && <SearchBuilder onViewScreening={() => setActiveTab('screening')} />}
         {activeTab === 'runs' && <RunsView />}

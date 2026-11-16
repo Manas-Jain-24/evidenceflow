@@ -9,10 +9,11 @@ import {
   ShieldCheck,
   XCircle
 } from 'lucide-react';
-import { useCallback, useDeferredValue, useEffect, useState } from 'react';
+import { useCallback, useDeferredValue, useEffect, useMemo, useRef, useState } from 'react';
 import { HumanDecisionBadge, MachineSuggestionBadge, StaleBadge } from '../../components/ui/Badge';
 import { KeyboardShortcutsModal } from '../../components/ui/KeyboardShortcutsModal';
 import { Modal } from '../../components/ui/Modal';
+import { NcbiDisclaimer } from '../../components/ui/NcbiDisclaimer';
 import { ReasonModal } from '../../components/ui/ReasonModal';
 import { api, getActiveReviewer } from '../../lib/api';
 import { useAction, useData, useWorkspace } from '../../lib/workspace';
@@ -22,6 +23,7 @@ export function ScreeningQueue() {
   const { reviewId } = useWorkspace();
 
   const [selectedRecordId, setSelectedRecordId] = useState<EntityId | null>(null);
+  const detailRef = useRef<HTMLDivElement>(null);
 
   // Filters
   const [filterDecision, setFilterDecision] = useState<string>('all');
@@ -43,7 +45,7 @@ export function ScreeningQueue() {
     q: deferredSearch.trim() || undefined
   };
   const [result, , loadData] = useData(['records', params], () => api.getRecords(reviewId, params));
-  const records = result?.items || [];
+  const records = useMemo(() => result?.items || [], [result]);
   const summary = records.find(r => r.id === selectedRecordId) || records[0];
   const [activeRecord] = useData(['record', summary?.id], () => summary ? api.getRecord(summary.id) : Promise.resolve(null));
 
@@ -154,33 +156,24 @@ export function ScreeningQueue() {
 
   return (
     <div className="space-y-5 max-w-6xl mx-auto py-2">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-              Step 5 • Gate 4
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Include • Exclude with Reason • Maybe</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">Title & Abstract Screening Queue</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Machine evidence suggests eligibility; humans stay in charge. Decisions apply across duplicate groups.
-          </p>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Screen papers</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Read the abstract, then include, exclude, or set aside.</p>
         </div>
 
         {/* Actions Bar */}
         <div className="flex items-center gap-2">
           {/* Bulk Accept Strong */}
-          <button
+          {strongCount > 0 && <button
             onClick={() => setIsBulkModalOpen(true)}
             disabled={strongCount === 0 || submitting}
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-teal-50 dark:bg-teal-950/40 hover:bg-teal-100 dark:hover:bg-teal-900/50 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/40 transition disabled:opacity-40"
             title="Accept all metadata-backed strong suggestions"
           >
             <ShieldCheck className="w-3.5 h-3.5" />
-            <span>Accept Strong ({strongCount})</span>
-          </button>
+            <span>Accept strong ({strongCount})</span>
+          </button>}
 
           {/* Hotkey Help Button */}
           <button
@@ -188,13 +181,13 @@ export function ScreeningQueue() {
             className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-700 transition"
           >
             <Keyboard className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-            <span>Hotkeys: I / E / M / N</span>
+            <span>Shortcuts</span>
           </button>
         </div>
       </div>
 
       {/* Filter and Search Bar */}
-      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2.5 rounded-2xl bg-white/60 dark:bg-slate-950/70 border border-slate-200/80 dark:border-slate-800 text-xs backdrop-blur-md">
+      <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 text-xs">
         {/* Decision Filter Pills */}
         <div className="flex items-center gap-1 overflow-x-auto">
           {[
@@ -207,9 +200,9 @@ export function ScreeningQueue() {
             <button
               key={tab.id}
               onClick={() => setFilterDecision(tab.id)}
-              className={`px-3 py-1.5 rounded-lg font-medium whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-md font-medium whitespace-nowrap transition ${
                 filterDecision === tab.id
-                  ? 'bg-teal-600 text-white font-semibold shadow-sm'
+                  ? 'bg-teal-50 text-teal-800 dark:bg-teal-950 dark:text-teal-200 font-semibold'
                   : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-900'
               }`}
             >
@@ -251,23 +244,24 @@ export function ScreeningQueue() {
       ) : (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
           {/* Left Column: Records Queue List */}
-          <div className="lg:col-span-5 space-y-2 max-h-[720px] overflow-y-auto pr-1">
+          <div className="order-2 lg:order-1 lg:col-span-5 space-y-1 max-h-[720px] overflow-y-auto pr-1">
             {records.map((r, idx) => {
               const isSelected = activeRecord?.id === r.id;
               return (
                 <button
                   key={r.id}
-                  onClick={() => setSelectedRecordId(r.id)}
-                  className={`w-full text-left p-3.5 rounded-2xl border text-xs transition-all duration-150 space-y-2 hover:-translate-y-0.5 hover:shadow-md ${
+                  onClick={() => {
+                    setSelectedRecordId(r.id);
+                    if (window.innerWidth < 1024) detailRef.current?.scrollIntoView?.({ behavior: 'smooth', block: 'start' });
+                  }}
+                  className={`w-full text-left p-3.5 rounded-lg border text-xs transition-colors space-y-2 ${
                     isSelected
-                      ? 'bg-white dark:bg-slate-800/90 border-teal-500/70 shadow-md'
-                      : 'bg-white/70 dark:bg-slate-900/60 border-slate-200/80 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'bg-teal-50 dark:bg-teal-950/40 border-teal-400 dark:border-teal-700'
+                      : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-600'
                   }`}
                 >
                   <div className="flex items-center justify-between gap-1">
-                    <span className="font-mono text-[10px] text-slate-400">
-                      #{idx + 1} • Rec #{r.id}
-                    </span>
+                    <span className="text-[11px] text-slate-500">{idx + 1} of {records.length}</span>
                     <div className="flex items-center gap-1.5">
                       <MachineSuggestionBadge suggestion={r.suggestion} />
                       <HumanDecisionBadge decision={r.current_decision} />
@@ -290,15 +284,12 @@ export function ScreeningQueue() {
           </div>
 
           {/* Right Column: Active Record Detail & Screening Actions */}
-          <div className="lg:col-span-7 p-6 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800 shadow-sm space-y-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+          <div ref={detailRef} className="order-1 lg:order-2 lg:col-span-7 p-6 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
             {/* Header with Title and Metadata */}
             <div className="space-y-2.5 pb-4 border-b border-slate-200 dark:border-slate-800">
               <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-slate-400 font-mono">
                 <div className="flex items-center gap-2">
-                  <span className="px-2 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 font-bold">
-                    RECORD #{activeRecord.id}
-                  </span>
-                  <span>Source: <strong className="text-teal-700 dark:text-teal-300">{activeRecord.source}</strong></span>
+                  <span>{activeRecord.source === 'pubmed' ? 'PubMed' : 'Europe PMC'} record</span>
                   {activeRecord.group_members_count && activeRecord.group_members_count > 1 && (
                     <span className="px-1.5 py-0.5 rounded bg-teal-50 dark:bg-teal-950/40 text-teal-700 dark:text-teal-300 border border-teal-200 dark:border-teal-500/20 font-sans">
                       Group of {activeRecord.group_members_count} papers
@@ -349,7 +340,7 @@ export function ScreeningQueue() {
                 <div className="flex items-center justify-between">
                   <span className="font-semibold text-slate-700 dark:text-slate-300 flex items-center gap-1.5">
                     <ShieldCheck className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                    <span>Algorithmic Screening Recommendation:</span>
+                    <span>Suggested decision</span>
                   </span>
                   <MachineSuggestionBadge suggestion={activeRecord.suggestion} />
                 </div>
@@ -364,7 +355,7 @@ export function ScreeningQueue() {
               <span className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider block font-mono">
                 Study Abstract
               </span>
-              <div className="p-4 rounded-xl bg-slate-50 dark:bg-slate-950/80 border border-slate-200 dark:border-slate-800 text-slate-800 dark:text-slate-200 text-xs leading-relaxed max-h-[280px] overflow-y-auto font-sans">
+              <div className="text-slate-700 dark:text-slate-200 text-sm leading-7 max-h-[320px] overflow-y-auto">
                 {activeRecord.abstract ? (
                   activeRecord.abstract
                 ) : (
@@ -376,20 +367,11 @@ export function ScreeningQueue() {
               </div>
             </div>
 
-            {/* Human Decision Status Bar */}
-            <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800 text-xs">
-              <span className="text-slate-600 dark:text-slate-400">Current Human Status:</span>
-              <div className="flex items-center gap-2">
-                {(activeRecord.is_stale || activeRecord.current_decision?.stale) && <StaleBadge />}
-                <HumanDecisionBadge decision={activeRecord.current_decision} />
-              </div>
-            </div>
-
             {/* Action Buttons: Include, Exclude, Maybe */}
             <div className="pt-2 border-t border-slate-200 dark:border-slate-800 space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">Submit Decision:</span>
-                <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">Reviewer: <strong className="text-teal-700 dark:text-teal-300">{getActiveReviewer()}</strong></span>
+                <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">Your decision</span>
+                <span className="flex items-center gap-2">{(activeRecord.is_stale || activeRecord.current_decision?.stale) && <StaleBadge />}<HumanDecisionBadge decision={activeRecord.current_decision} /></span>
               </div>
 
               <div className="grid grid-cols-3 gap-3">
@@ -427,6 +409,8 @@ export function ScreeningQueue() {
           </div>
         </div>
       )}
+
+      {records.some(record => record.source === 'pubmed') && <NcbiDisclaimer />}
 
       {/* Mandatory Exclusion Reason Modal */}
       <ReasonModal

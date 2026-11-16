@@ -1,4 +1,4 @@
-import { AlertCircle, FileText, GitMerge, Lightbulb, RefreshCw, Sparkles } from 'lucide-react';
+import { AlertCircle, FileText, GitMerge, RefreshCw } from 'lucide-react';
 import React from 'react';
 import { api } from '../../lib/api';
 import { useData, useWorkspace } from '../../lib/workspace';
@@ -11,18 +11,9 @@ export function ReviewIntelligence() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-2">
       {/* Top Banner */}
-      <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-2 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-amber-500/10 text-amber-700 dark:text-amber-300 border border-amber-500/30 flex items-center gap-1.5">
-            <Sparkles className="w-3 h-3" />
-            Innovation • AI Review Intelligence
-          </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Evidence-Backed Algorithmic Recommendations</span>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Review Intelligence & Cross-Version Audit</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl">
-          Algorithmic heuristics surface prior exclusions impacted by criteria revisions and trace multi-report clinical trial families across registers. Reviewers maintain complete oversight.
-        </p>
+      <div className="border-b border-slate-200 pb-5 dark:border-slate-800">
+        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Review intelligence</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Find older decisions to revisit and related reports from the same study.</p>
       </div>
 
       {/* Grid: 2 Intelligence Columns */}

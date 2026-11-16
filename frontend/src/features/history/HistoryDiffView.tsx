@@ -56,17 +56,9 @@ export function HistoryDiffView({ onNavigateToConflicts }: HistoryDiffViewProps)
   return (
     <div className="max-w-6xl mx-auto space-y-5 py-2">
       {/* Top Header */}
-      <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-2 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-            Query history
-          </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Query Evolution & Decision Preservation</span>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Query Evolution & Set Diff View</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl">
-          Change your query parameters as often as you like. EvidenceFlow computes an exact set difference, links duplicate clusters, and mathematically guarantees zero loss of reviewer screening decisions.
-        </p>
+      <div className="border-b border-slate-200 pb-5 dark:border-slate-800">
+        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Search changes</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Compare search versions and see what was added, retained, or dropped.</p>
       </div>
 
       {!queries.length ? (

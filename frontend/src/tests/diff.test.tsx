@@ -23,7 +23,7 @@ function installApi() {
 describe('Stored query history', () => {
   it('compares selected UUID versions and shows only metrics supplied by the backend', async () => {
     installApi(); render(<Harness><HistoryDiffView /></Harness>);
-    expect(await screen.findByText('Query Evolution & Decision Preservation')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Search changes' })).toBeInTheDocument();
     expect(screen.getByText('45')).toBeInTheDocument(); expect(screen.getByText('498')).toBeInTheDocument();
     expect(screen.queryByText('Inherited Decisions')).not.toBeInTheDocument();
     expect(screen.queryByText(/Kahn S\.E\./)).not.toBeInTheDocument();

@@ -45,7 +45,9 @@ export function RunsView() {
           setSelectedRunId(parsed.runId);
         }
       }
-    } catch {}
+    } catch {
+      // Ignore invalid saved run state and use the current review.
+    }
   }, [reviewId, selectedRunId]);
 
   // Poll active run if running
@@ -72,17 +74,9 @@ export function RunsView() {
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-2">
       {/* Header */}
-      <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-            Pipeline Execution • Gate 3
-          </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Fetch → Store → Dedup → Reconcile → Screen → PICO → Diff</span>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">Automated Pipeline Runs & Orchestration Log</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Trace automated background batch execution with step-level input/output summaries and idempotent retry. Polled every 1.5s while running.
-        </p>
+      <div className="border-b border-slate-200 pb-5 dark:border-slate-800">
+        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Import runs</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">See what happened during each import.</p>
       </div>
 
       {/* Query Version selector to trigger or view runs */}
@@ -196,7 +190,7 @@ export function RunsView() {
                             {s.output_summary_json && (
                               <p className="text-[11px] opacity-80 mt-0.5">
                                 {typeof s.output_summary_json === 'object'
-                                  ? (s.output_summary_json as any).message || JSON.stringify(s.output_summary_json)
+                                  ? ('message' in s.output_summary_json ? String(s.output_summary_json.message) : JSON.stringify(s.output_summary_json))
                                   : String(s.output_summary_json)}
                               </p>
                             )}

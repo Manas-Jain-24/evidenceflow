@@ -101,17 +101,11 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
   const activeCriteriaCount = criteriaVer?.criteria?.filter(c => c.is_active).length || 0;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto py-2">
-      {/* Clean, Airy Top Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-3 border-b border-slate-200/80 dark:border-slate-800/80">
+    <div className="space-y-7 max-w-5xl mx-auto py-2">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
         <div className="space-y-1">
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-              Protocol Workspace • Gate 1
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Criteria Version: v{criteriaVer?.version_no}</span>
-          </div>
-          <h2 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-slate-100 tracking-tight">{review.title}</h2>
+          <span className="text-xs text-slate-500 dark:text-slate-400">Protocol · Criteria v{criteriaVer?.version_no}</span>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">{review.title}</h2>
         </div>
 
         <div className="flex items-center gap-2">
@@ -121,7 +115,7 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
               className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-white dark:bg-slate-900 hover:bg-slate-100 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-800 shadow-sm transition"
             >
               <Edit2 className="w-3.5 h-3.5 text-teal-600 dark:text-teal-400" />
-              <span>Edit Question & PICO</span>
+              <span>Edit protocol</span>
             </button>
           ) : (
             <div className="flex items-center gap-2">
@@ -153,33 +147,10 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
         </div>
       </div>
 
-      {/* Summary Stat Pills with Hover Interactions */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 md:gap-4">
-        <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-          <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Literature Records</span>
-          <div className="text-2xl font-bold text-slate-900 dark:text-slate-100 font-mono">{review.stats?.total_records ?? 0}</div>
-          <span className="text-[11px] text-slate-500">Fetched via API</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-          <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Deduplicated Groups</span>
-          <div className="text-2xl font-bold text-teal-600 dark:text-teal-400 font-mono">{review.stats?.unique_groups ?? 0}</div>
-          <span className="text-[11px] text-slate-500">Single representation</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-          <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Protocol Criteria</span>
-          <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400 font-mono">{activeCriteriaCount}</div>
-          <span className="text-[11px] text-slate-500">Active rules</span>
-        </div>
-
-        <div className="p-4 rounded-2xl bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 space-y-1 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-          <span className="text-[10px] uppercase font-bold text-slate-500 dark:text-slate-400 tracking-wider">Screening Progress</span>
-          <div className="text-2xl font-bold text-indigo-600 dark:text-indigo-400 font-mono">
-            {review.stats?.total_records ? Math.round(((review.stats.included + review.stats.excluded) / review.stats.total_records) * 100) : 0}%
-          </div>
-          <span className="text-[11px] text-slate-500">{review.stats?.unscreened ?? 0} pending</span>
-        </div>
+      <div className="flex flex-wrap gap-x-8 gap-y-3 border-b border-slate-200 pb-6 text-sm dark:border-slate-800">
+        <span><strong className="mr-1.5 text-lg font-semibold tabular-nums">{review.stats?.total_records ?? 0}</strong><span className="text-slate-500">records</span></span>
+        <span><strong className="mr-1.5 text-lg font-semibold tabular-nums">{activeCriteriaCount}</strong><span className="text-slate-500">active criteria</span></span>
+        <span><strong className="mr-1.5 text-lg font-semibold tabular-nums">{review.stats?.total_records ? Math.round(((review.stats.included + review.stats.excluded) / review.stats.total_records) * 100) : 0}%</strong><span className="text-slate-500">screened</span></span>
       </div>
 
       {/* Segmented Tabs */}
@@ -193,7 +164,7 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
           }`}
         >
           <FileText className="w-3.5 h-3.5" />
-          <span>Research Question & PICO</span>
+          <span>Question & PICO</span>
         </button>
 
         <button
@@ -205,7 +176,7 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
           }`}
         >
           <ShieldCheck className="w-3.5 h-3.5" />
-          <span>Inclusion & Exclusion Criteria ({criteriaVer?.criteria.length || 0})</span>
+          <span>Criteria ({criteriaVer?.criteria.length || 0})</span>
         </button>
       </div>
 
@@ -213,7 +184,7 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
       {activeTab === 'pico' && (
         <div className="space-y-4 animate-in fade-in duration-150">
           {/* Main Question Card */}
-          <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/50 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/90 shadow-sm space-y-2 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+          <div className="rounded-xl border border-slate-200 bg-white p-5 space-y-2 dark:border-slate-800 dark:bg-slate-900">
             <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 font-mono block">
               Primary Research Question
             </span>
@@ -225,8 +196,8 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
                 className="w-full px-4 py-2.5 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-700 rounded-xl text-sm text-slate-900 dark:text-slate-100 focus:outline-none focus:border-teal-500 min-h-[70px]"
               />
             ) : (
-              <p className="text-base sm:text-lg font-medium text-slate-800 dark:text-slate-100 leading-relaxed italic">
-                "{review.question}"
+              <p className="text-base sm:text-lg font-medium text-slate-800 dark:text-slate-100 leading-relaxed">
+                {review.question}
               </p>
             )}
           </div>
@@ -234,8 +205,8 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
           {/* 4 PICO Pillars */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
             {/* Population */}
-            <div className="p-4 rounded-2xl bg-blue-50/60 dark:bg-blue-950/20 border border-blue-200/80 dark:border-blue-900/40 space-y-1.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-              <span className="text-xs font-bold text-blue-700 dark:text-blue-400 uppercase tracking-wider font-mono">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-1.5 dark:border-slate-800 dark:bg-slate-900">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Population (P)
               </span>
               {isEditingPico ? (
@@ -249,12 +220,11 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
               ) : (
                 <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">{review.population || 'Not defined yet'}</div>
               )}
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Target patient or subject demographic eligible for this review.</p>
             </div>
 
             {/* Intervention */}
-            <div className="p-4 rounded-2xl bg-teal-50/60 dark:bg-teal-950/20 border border-teal-200/80 dark:border-teal-900/40 space-y-1.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-              <span className="text-xs font-bold text-teal-700 dark:text-teal-400 uppercase tracking-wider font-mono">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-1.5 dark:border-slate-800 dark:bg-slate-900">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Intervention (I)
               </span>
               {isEditingPico ? (
@@ -268,12 +238,11 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
               ) : (
                 <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">{review.intervention || 'Not defined yet'}</div>
               )}
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Therapeutic agent, diagnostic modality, or experimental intervention.</p>
             </div>
 
             {/* Comparator */}
-            <div className="p-4 rounded-2xl bg-amber-50/60 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-900/40 space-y-1.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-              <span className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-wider font-mono">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-1.5 dark:border-slate-800 dark:bg-slate-900">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Comparator (C)
               </span>
               {isEditingPico ? (
@@ -287,12 +256,11 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
               ) : (
                 <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">{review.comparator || 'Not defined yet'}</div>
               )}
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Standard of care, placebo, or active control comparison.</p>
             </div>
 
             {/* Outcome */}
-            <div className="p-4 rounded-2xl bg-rose-50/60 dark:bg-rose-950/20 border border-rose-200/80 dark:border-rose-900/40 space-y-1.5 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-              <span className="text-xs font-bold text-rose-700 dark:text-rose-400 uppercase tracking-wider font-mono">
+            <div className="rounded-xl border border-slate-200 bg-white p-4 space-y-1.5 dark:border-slate-800 dark:bg-slate-900">
+              <span className="text-xs font-semibold text-slate-500 dark:text-slate-400">
                 Outcome (O)
               </span>
               {isEditingPico ? (
@@ -306,7 +274,6 @@ export function ReviewSetup({ onProceedToSearch }: ReviewSetupProps) {
               ) : (
                 <div className="text-xs font-semibold text-slate-800 dark:text-slate-200">{review.outcome || 'Not defined yet'}</div>
               )}
-              <p className="text-[11px] text-slate-500 dark:text-slate-400">Primary and secondary clinical endpoints being measured.</p>
             </div>
           </div>
         </div>

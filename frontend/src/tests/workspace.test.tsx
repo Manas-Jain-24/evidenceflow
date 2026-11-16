@@ -32,13 +32,13 @@ describe('Workspace connectivity', () => {
     fireEvent.click(screen.getByRole('button', { name: '+ Create Review' }));
     fireEvent.change(screen.getByLabelText('Review Title:'), { target: { value: 'My protocol' } });
     fireEvent.change(screen.getByLabelText('PICO Research Question:'), { target: { value: 'My question' } });
-    fireEvent.click(screen.getByRole('button', { name: 'Create Systematic Review' }));
+    fireEvent.click(screen.getByRole('button', { name: 'Create review' }));
     expect(await screen.findByRole('heading', { name: 'My protocol' })).toBeInTheDocument();
     expect(screen.getByText('0%')).toBeInTheDocument();
     expect(localStorage.getItem('evidenceflow_review')).toBe('created-uuid');
     expect(fetcher.mock.calls.some(([url]) => url.includes('/reviews/1'))).toBe(false);
     fireEvent.click(screen.getByRole('button', { name: 'Search Literature' }));
-    expect(await screen.findByRole('heading', { name: 'Literature Database Query Builder' })).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Search literature' })).toBeInTheDocument();
   });
   it('switches to a different stored review without reusing the first review data', async () => {
     const first = review('first-uuid', 'First protocol'), second = review('second-uuid', 'Second protocol');

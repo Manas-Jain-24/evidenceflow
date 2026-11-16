@@ -1,4 +1,4 @@
-import { AlertTriangle, Bot, CheckCircle, Clock, HelpCircle, Info, User, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Clock, HelpCircle, Info, XCircle } from 'lucide-react';
 import { PicoLabel, ScreeningDecision, ScreeningSuggestion } from '../../types/api';
 
 export function MachineSuggestionBadge({ suggestion }: { suggestion?: ScreeningSuggestion | null; }) {
@@ -6,17 +6,17 @@ export function MachineSuggestionBadge({ suggestion }: { suggestion?: ScreeningS
 
   const config = {
     include: {
-      border: 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10',
+      border: 'border-emerald-300 text-emerald-800 dark:border-emerald-700 dark:text-emerald-300',
       icon: CheckCircle,
       label: 'Suggested: Include'
     },
     exclude: {
-      border: 'border-rose-500/40 text-rose-400 bg-rose-500/10',
+      border: 'border-rose-300 text-rose-800 dark:border-rose-700 dark:text-rose-300',
       icon: XCircle,
       label: 'Suggested: Exclude'
     },
     maybe: {
-      border: 'border-amber-500/40 text-amber-400 bg-amber-500/10',
+      border: 'border-amber-300 text-amber-800 dark:border-amber-700 dark:text-amber-300',
       icon: HelpCircle,
       label: 'Suggested: Maybe'
     }
@@ -28,14 +28,11 @@ export function MachineSuggestionBadge({ suggestion }: { suggestion?: ScreeningS
   return (
     <div className="relative group inline-block">
       <span
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-medium border ${config.border} cursor-help transition-all shadow-sm`}
+        className={`inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-[11px] font-medium ${config.border} cursor-help`}
         title={explanation}
       >
-        <Bot className="w-3.5 h-3.5 opacity-80" />
         <span>{config.label}</span>
-        <span className="text-[10px] uppercase tracking-wider px-1 py-0.5 rounded bg-slate-800/80 text-slate-300 font-mono">
-          {strength}
-        </span>
+        {strength !== 'none' && <span className="text-[10px] opacity-70">{strength}</span>}
       </span>
 
       {/* Tooltip on hover */}
@@ -63,8 +60,7 @@ export function MachineSuggestionBadge({ suggestion }: { suggestion?: ScreeningS
 export function HumanDecisionBadge({ decision }: { decision?: ScreeningDecision | null; }) {
   if (!decision) {
     return (
-      <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md text-xs font-medium bg-slate-800 border border-slate-700 text-slate-400">
-        <HelpCircle className="w-3.5 h-3.5" />
+      <span className="inline-flex items-center rounded-md px-2 py-1 text-[11px] text-slate-500 dark:text-slate-400">
         <span>Unscreened</span>
       </span>
     );
@@ -72,17 +68,17 @@ export function HumanDecisionBadge({ decision }: { decision?: ScreeningDecision 
 
   const config = {
     include: {
-      bg: 'bg-emerald-600 text-white border-emerald-500 shadow-emerald-950/40',
+      bg: 'bg-emerald-700 text-white border-emerald-700',
       icon: CheckCircle,
       label: 'Included'
     },
     exclude: {
-      bg: 'bg-rose-600 text-white border-rose-500 shadow-rose-950/40',
+      bg: 'bg-rose-700 text-white border-rose-700',
       icon: XCircle,
       label: 'Excluded'
     },
     maybe: {
-      bg: 'bg-amber-600 text-white border-amber-500 shadow-amber-950/40',
+      bg: 'bg-amber-700 text-white border-amber-700',
       icon: HelpCircle,
       label: 'Maybe'
     }
@@ -93,9 +89,8 @@ export function HumanDecisionBadge({ decision }: { decision?: ScreeningDecision 
   return (
     <div className="relative group inline-block">
       <span
-        className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-semibold shadow border ${config.bg} cursor-help transition-transform active:scale-95`}
+        className={`inline-flex items-center gap-1 rounded-md border px-2 py-1 text-[11px] font-medium ${config.bg} cursor-help`}
       >
-        <User className="w-3.5 h-3.5" />
         <span>{config.label}</span>
         {originLabel && (
           <span className="text-[10px] opacity-80 uppercase tracking-tight font-mono">{originLabel}</span>

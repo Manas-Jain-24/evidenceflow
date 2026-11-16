@@ -1,4 +1,4 @@
-import { CheckCircle, ChevronRight, Database, Eye, FileText, Play, Search } from 'lucide-react';
+import { ChevronRight, Database, Eye, FileText, Play, Search } from 'lucide-react';
 import React, { useState } from 'react';
 import { NcbiDisclaimer } from '../../components/ui/NcbiDisclaimer';
 import { api } from '../../lib/api';
@@ -99,23 +99,14 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
 
   return (
     <div className="space-y-6 max-w-6xl mx-auto py-2">
-      {/* Top Banner */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm transition-all duration-200">
+      <div className="flex flex-col sm:flex-row items-start sm:items-end justify-between gap-4 pb-5 border-b border-slate-200 dark:border-slate-800">
         <div>
-          <div className="flex items-center gap-2">
-            <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-              Steps 1 & 2 • Gate 2
-            </span>
-            <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">Immutable Query Versions</span>
-          </div>
-          <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100 mt-1">Literature Database Query Builder</h2>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
-            Formulate Boolean queries against PubMed and Europe PMC APIs. Preview hits before approving import.
-          </p>
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Search literature</h2>
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Search live sources, preview results, then import papers.</p>
         </div>
 
         {/* Existing Query Version Selector Tabs */}
-        <div className="flex items-center gap-1.5 p-1 bg-slate-100 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 max-w-full overflow-x-auto">
+        <div className="flex items-center gap-1 max-w-full overflow-x-auto">
           {queries.map(q => (
             <button
               key={q.id}
@@ -123,10 +114,10 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                 setSelectedId(q.id);
                 setPreviewData(null);
               }}
-              className={`px-3 py-1.5 rounded-lg text-xs font-medium font-mono whitespace-nowrap transition ${
+              className={`px-3 py-1.5 rounded-md text-xs font-medium whitespace-nowrap transition ${
                 selectedQuery?.id === q.id
-                  ? 'bg-teal-600 text-white shadow-sm'
-                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-200/70 dark:hover:bg-slate-800/50'
+                  ? 'bg-teal-50 text-teal-800 dark:bg-teal-950 dark:text-teal-200'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800'
               }`}
             >
               v{q.version_no} ({q.hit_count != null ? `${q.hit_count.toLocaleString()} hits` : q.status})
@@ -143,11 +134,11 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
       {/* Main Grid: Form + Version Details */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
         {/* Left Column: Query Builder Form */}
-        <div className="lg:col-span-7 p-6 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+        <div className="lg:col-span-7 p-6 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Search className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-              <span>Define New Query Version</span>
+              <span>New search</span>
             </h3>
             <span className="text-[11px] text-slate-500 dark:text-slate-400 font-mono">v{queries.length + 1} Draft</span>
           </div>
@@ -191,69 +182,34 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
               />
             </div>
 
-            {/* Source & Dates */}
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-              <div>
-                <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Literature Database:</label>
-                <select
-                  value={source}
-                  onChange={e => setSource(e.target.value as 'europe_pmc' | 'pubmed')}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 focus:outline-none focus:border-teal-500"
-                >
-                  <option value="europe_pmc">Europe PMC (REST API)</option>
-                  <option value="pubmed">PubMed (NCBI EFetch)</option>
-                </select>
-              </div>
-              <div>
-                <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Date From:</label>
-                <input
-                  type="date"
-                  value={dateFrom}
-                  onChange={e => setDateFrom(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 font-mono focus:outline-none focus:border-teal-500"
-                />
-              </div>
-              <div>
-                <label className="font-semibold text-slate-700 dark:text-slate-300 block mb-1">Date To:</label>
-                <input
-                  type="date"
-                  value={dateTo}
-                  onChange={e => setDateTo(e.target.value)}
-                  className="w-full px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 font-mono focus:outline-none focus:border-teal-500"
-                />
-              </div>
+            <div>
+              <label htmlFor="search-source" className="font-medium text-slate-700 dark:text-slate-300 block mb-1">Source</label>
+              <select id="search-source" value={source} onChange={e => setSource(e.target.value as 'europe_pmc' | 'pubmed')}
+                className="w-full max-w-xs px-3 py-2 bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 focus:outline-none focus:border-teal-500">
+                <option value="europe_pmc">Europe PMC</option>
+                <option value="pubmed">PubMed</option>
+              </select>
             </div>
 
-            {/* Options */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
-              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <input
-                  type="checkbox"
-                  id="synonymToggle"
-                  checked={synonymExpansion}
-                  onChange={e => setSynonymExpansion(e.target.checked)}
-                  className="rounded border-slate-300 text-teal-600 focus:ring-0 bg-white dark:bg-slate-900 w-4 h-4 cursor-pointer"
-                />
-                <label htmlFor="synonymToggle" className="cursor-pointer text-slate-700 dark:text-slate-300">
-                  <span className="font-semibold block">MeSH Synonym Expansion</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Use source-supported synonym expansion</span>
+            <details className="border-t border-slate-200 pt-3 dark:border-slate-800">
+              <summary className="cursor-pointer text-sm text-slate-600 dark:text-slate-300">Filters and options</summary>
+              <div className="grid grid-cols-1 gap-3 pt-4 sm:grid-cols-2">
+                <label className="text-slate-600 dark:text-slate-300">From date
+                  <input type="date" value={dateFrom} onChange={e => setDateFrom(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100" />
+                </label>
+                <label className="text-slate-600 dark:text-slate-300">To date
+                  <input type="date" value={dateTo} onChange={e => setDateTo(e.target.value)} className="mt-1 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 py-2 text-slate-900 dark:border-slate-800 dark:bg-slate-950 dark:text-slate-100" />
+                </label>
+                <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                  <input type="checkbox" checked={synonymExpansion} onChange={e => setSynonymExpansion(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-teal-600" />
+                  MeSH synonym expansion
+                </label>
+                <label className="flex items-center gap-2 text-slate-700 dark:text-slate-300">
+                  <input type="checkbox" checked={titleAbstractOnly} onChange={e => setTitleAbstractOnly(e.target.checked)} className="h-4 w-4 rounded border-slate-300 text-teal-600" />
+                  Titles and abstracts only
                 </label>
               </div>
-
-              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-50 dark:bg-slate-950/60 border border-slate-200 dark:border-slate-800">
-                <input
-                  type="checkbox"
-                  id="titleAbstractOnly"
-                  checked={titleAbstractOnly}
-                  onChange={e => setTitleAbstractOnly(e.target.checked)}
-                  className="rounded border-slate-300 text-teal-600 focus:ring-0 bg-white dark:bg-slate-900 w-4 h-4 cursor-pointer"
-                />
-                <label htmlFor="titleAbstractOnly" className="cursor-pointer text-slate-700 dark:text-slate-300">
-                  <span className="font-semibold block">Titles & Abstracts Only</span>
-                  <span className="text-[10px] text-slate-500 dark:text-slate-400 block">Restrict search to title & abstract fields</span>
-                </label>
-              </div>
-            </div>
+            </details>
 
             {/* Submit create version */}
             <div className="flex justify-end pt-2">
@@ -261,7 +217,7 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                 type="submit"
                 className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-600 hover:bg-teal-500 text-white font-semibold shadow-sm transition hover:shadow-md"
               >
-              <span>{previewLoading ? 'Searching live source…' : `Search live & preview as v${queries.length + 1}`}</span>
+              <span>{previewLoading ? 'Searching…' : 'Search and preview'}</span>
                 <ChevronRight className="w-4 h-4" />
               </button>
             </div>
@@ -269,11 +225,11 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
         </div>
 
         {/* Right Column: Selected Version Inspector & Execution */}
-        <div className="lg:col-span-5 p-6 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-4 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
+        <div className="lg:col-span-5 p-6 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-4">
           <div className="flex items-center justify-between pb-3 border-b border-slate-200 dark:border-slate-800">
             <h3 className="text-sm font-bold text-slate-900 dark:text-slate-100 flex items-center gap-2">
               <Database className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
-              <span>Active Query Version Inspector</span>
+              <span>Selected search</span>
             </h3>
             {selectedQuery && (
               <span className="px-2 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700">
@@ -320,7 +276,7 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                   className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700 font-semibold shadow-sm transition"
                 >
                   <Eye className="w-4 h-4 text-teal-600 dark:text-teal-400" />
-                  <span>{previewLoading ? 'Querying API hit count...' : 'Preview Hits & Sample Abstracts'}</span>
+                  <span>{previewLoading ? 'Loading preview…' : 'Preview papers'}</span>
                 </button>
 
                 <button
@@ -332,8 +288,8 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                   <Play className="w-4 h-4" />
                   <span>
                     {selectedQuery.status === 'imported'
-                      ? 'Re-Run Import Pipeline (Idempotent)'
-                      : 'Approve & Import Abstracts (Run Pipeline)'}
+                      ? 'Run import again'
+                      : 'Approve and import'}
                   </span>
                 </button>
               </div>
@@ -345,7 +301,7 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                   onClick={() => setIsDrawerOpen(true)}
                   className="w-full py-1.5 text-center text-teal-600 dark:text-teal-400 hover:underline text-xs font-mono"
                 >
-                  View Active Run #{activeRunId} Progress & Logs
+                  View import progress
                 </button>
               )}
             </div>
@@ -370,13 +326,6 @@ export function SearchBuilder({ onViewScreening }: { onViewScreening?: () => voi
                 Total Hits: <span className="text-emerald-600 dark:text-emerald-400 font-bold font-mono">{previewData.hit_count.toLocaleString()}</span>. Showing sample preview records before downloading into database.
               </p>
             </div>
-            <button
-              onClick={handleApproveImport}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-semibold bg-teal-600 hover:bg-teal-500 text-white shadow-sm transition"
-            >
-              <CheckCircle className="w-3.5 h-3.5" />
-              <span>Approve & Import</span>
-            </button>
           </div>
 
           {previewData.warnings?.map((warning, i) => (

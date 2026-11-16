@@ -1,4 +1,4 @@
-import { CheckCircle2, Edit3, Tag, XCircle } from 'lucide-react';
+import { CheckCircle2, Edit3, XCircle } from 'lucide-react';
 import { useState } from 'react';
 import { PicoBadge } from '../../components/ui/Badge';
 import { NcbiDisclaimer } from '../../components/ui/NcbiDisclaimer';
@@ -49,17 +49,9 @@ export function PicoWorkspace() {
   return (
     <div className="max-w-6xl mx-auto space-y-5 py-2">
       {/* Top Banner */}
-      <div className="p-5 rounded-2xl bg-white/70 dark:bg-slate-900/60 backdrop-blur-md border border-slate-200/80 dark:border-slate-800/80 shadow-sm space-y-2 hover:-translate-y-0.5 hover:shadow-md transition-all duration-200">
-        <div className="flex items-center gap-2">
-          <span className="px-2.5 py-0.5 rounded-md text-[11px] font-bold font-mono uppercase bg-teal-500/10 text-teal-700 dark:text-teal-300 border border-teal-500/30">
-            Step 6 • Gate 4
-          </span>
-          <span className="text-xs text-slate-500 dark:text-slate-400 font-mono">PICO Element Span Extraction</span>
-        </div>
-        <h2 className="text-xl font-bold text-slate-900 dark:text-slate-100">PICO Spans Annotator</h2>
-        <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed max-w-3xl">
-          Confirm, correct, or reject extracted spans. Human edits preserve the original machine evidence and provenance history.
-        </p>
+      <div className="border-b border-slate-200 pb-5 dark:border-slate-800">
+        <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100">Extract PICO</h2>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Check the population, intervention, comparator, and outcomes found in each paper.</p>
       </div>
 
       {!records.length && (
